@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from .models import Trip, TripLeg, DailyLog
 from .serializers import TripSerializer
 from .services import RoutePlanner
@@ -11,6 +13,7 @@ from datetime import datetime
 from decimal import Decimal
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
