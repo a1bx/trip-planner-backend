@@ -1,5 +1,5 @@
 """
-Django settings for eld_backend project (production-ready).
+Django settings for eld_backend project (public test mode).
 """
 
 from pathlib import Path
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'rest_framework_simplejwt',
     'trips',
 ]
 
@@ -59,7 +58,7 @@ ROOT_URLCONF = 'eld_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'frontend' / 'build'],  
+        'DIRS': [BASE_DIR / 'frontend' / 'build'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,7 +80,7 @@ DATABASES = {
 }
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -95,11 +94,9 @@ CORS_ALLOW_HEADERS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
 }
 
@@ -112,18 +109,10 @@ SIMPLE_JWT = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 LANGUAGE_CODE = 'en-us'
@@ -131,11 +120,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend' / 'build' / 'static', 
-]
+STATICFILES_DIRS = [BASE_DIR / 'frontend' / 'build' / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
