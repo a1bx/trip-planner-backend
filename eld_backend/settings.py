@@ -1,5 +1,5 @@
 """
-Django settings for eld_backend project (public test mode).
+Django settings for eld_backend project.
 """
 
 from pathlib import Path
@@ -21,14 +21,12 @@ def load_env_file():
 
 load_env_file()
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')]
 
 ORS_API_KEY = os.environ.get('ORS_API_KEY')
 print(f"ORS_API_KEY loaded: {'Yes' if ORS_API_KEY else 'No'}")
-if ORS_API_KEY:
-    print(f"ORS_API_KEY starts with: {ORS_API_KEY[:10]}...")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,7 +56,7 @@ ROOT_URLCONF = 'eld_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'frontend' / 'build'],
+        'DIRS': [],  # Remove frontend build directory for now
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,14 +71,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'eld_backend.wsgi.application'
 
+# Database
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS settings
+cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
+CORS_ALLOW_ALL_ORIGINS = True  # Keep for now
+
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -122,6 +127,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'frontend' / 'build' / 'static']
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
