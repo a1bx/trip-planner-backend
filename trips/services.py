@@ -27,12 +27,17 @@ class RoutePlanner:
     def calculate_route(self, start, end):
         url = f"{self.base_url}/v2/directions/driving-car"
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        body = {"coordinates": [start, end], "format": "geojson"}
+        body = {
+            "coordinates": [start, end], 
+            "format": "geojson"
+        }
+        params = {
+            "api_key": self.api_key
+        }
 
-        r = requests.post(url, headers=headers, json=body)
+        r = requests.post(url, headers=headers, json=body, params=params)
         r.raise_for_status()
         data = r.json()
 
